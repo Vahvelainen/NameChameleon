@@ -1,4 +1,4 @@
-# NameMasker
+# NameChameleon
 
 A Python tool for anonymizing Excel and CSV files with deterministic pseudonymization.
 
