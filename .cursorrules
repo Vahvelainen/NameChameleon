@@ -1,0 +1,17 @@
+# NameMasker Project Rules
+
+## Environment
+- Use venv for virtual environment management
+
+## Code Style
+- Use OOP (Object-Oriented Programming) approach
+- Empty __init__.py files only (no code in init files)
+- Do not add non-informative comments or docstrings
+- Use absolute imports (e.g., `from anonymization.core.anonymizer import Anonymizer`)
+- Try to add type hints, but use `Any` if type hints become too cumbersome
+
+## Architecture
+- Keep the base anonymizer as a configurable class for extensibility
+- Handle Excel sheets separately
+- Support different column types: first_name, last_name, full_name, email, id, misc
+
