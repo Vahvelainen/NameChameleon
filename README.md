@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ## Usage
 
 ```python
-from anonymization.core.anonymizer import Anonymizer
+from anonymization import Anonymizer
 
 # Map your column names to anonymization types
 column_config = {

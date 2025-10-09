@@ -1,4 +1,4 @@
-from anonymization.core.anonymizer import Anonymizer
+from anonymization import Anonymizer
 
 column_config = {
     'FirstName': 'first_name',
