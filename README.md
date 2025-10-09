@@ -18,24 +18,35 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Usage Example
+## Usage
 
 ```python
 from anonymization.core.anonymizer import Anonymizer
 
+# Map your column names to anonymization types
 column_config = {
-    'FirstName': 'first_name',
+    'FirstName': 'first_name',      # Column name in your file → type
     'LastName': 'last_name',
     'Email': 'email',
     'EmployeeID': 'id',
     'Notes': 'misc'
+    # Columns not listed here remain unchanged
 }
 
 anonymizer = Anonymizer(column_config=column_config, locale='en_US')
 
+# Excel (processes all sheets)
 anonymizer.anonymize_excel('input.xlsx', 'output.xlsx')
 
-print(f"Salt used: {anonymizer.get_salt().hex()}")
+# CSV
+anonymizer.anonymize_csv('input.csv', 'output.csv')
+
+# Save salt for reproducibility (optional)
+salt = anonymizer.get_salt()
+print(f"Salt: {salt.hex()}")
+
+# Reuse salt for consistent results
+anonymizer2 = Anonymizer(column_config=column_config, salt=salt)
 ```
 
 ## Column Types
@@ -43,19 +54,23 @@ print(f"Salt used: {anonymizer.get_salt().hex()}")
 - `first_name`: Anonymizes to realistic first names
 - `last_name`: Anonymizes to realistic last names
 - `full_name`: Anonymizes full names (splits and handles independently)
-- `email`: Generates email from anonymized names
+- `email`: Generates email from anonymized names (see below)
 - `id`: Hashes to 8-character alphanumeric ID
 - `misc`: Replaces with empty string (deletes)
 
-### Email Edge Cases
+**Note:** Columns not in `column_config` remain unchanged.
 
-Email anonymization extracts names from the local part (before @) and preserves the domain. Only dot (`.`) is treated as a name separator:
+### Email Handling
 
-- `john.smith@company.com` → `firstname.lastname@company.com` (two-part email)
-- `alice@example.com` → `firstname@example.com` (single-name email)
-- `alice_johnson@company.com` → `firstname@company.com` (underscore treated as part of single name)
+Email anonymization preserves the domain and only treats dot (`.`) as a name separator:
 
-For consistent matching across columns, ensure your source data uses dot-separated emails (e.g., if email is `john.smith@domain.com`, then first_name="John" and last_name="Smith").
+```
+john.smith@company.com    → michael.jones@company.com    (two parts: first.last)
+alice@example.com         → sarah@example.com            (single name)
+alice_johnson@company.com → sarah@company.com            (underscore NOT a separator)
+```
+
+For consistency across columns, use dot-separated emails (e.g., `john.smith@domain.com`) that match your `FirstName` and `LastName` columns.
 
 ## Architecture
 
