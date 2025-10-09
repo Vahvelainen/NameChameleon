@@ -47,6 +47,16 @@ print(f"Salt used: {anonymizer.get_salt().hex()}")
 - `id`: Hashes to 8-character alphanumeric ID
 - `misc`: Replaces with empty string (deletes)
 
+### Email Edge Cases
+
+Email anonymization extracts names from the local part (before @) and preserves the domain. Only dot (`.`) is treated as a name separator:
+
+- `john.smith@company.com` → `firstname.lastname@company.com` (two-part email)
+- `alice@example.com` → `firstname@example.com` (single-name email)
+- `alice_johnson@company.com` → `firstname@company.com` (underscore treated as part of single name)
+
+For consistent matching across columns, ensure your source data uses dot-separated emails (e.g., if email is `john.smith@domain.com`, then first_name="John" and last_name="Smith").
+
 ## Architecture
 
 ```
