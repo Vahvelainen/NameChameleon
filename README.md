@@ -49,6 +49,24 @@ print(f"Salt: {salt.hex()}")
 anonymizer2 = Anonymizer(column_config=column_config, salt=salt)
 ```
 
+#### Input
+| FirstName | LastName | FullName | Email | EmployeeID | Department | Notes |
+|-----------|----------|----------|-------|------------|------------|-------|
+| John | Smith | John Smith | john.smith@company.com | EMP001 | Engineering | Private info 1 |
+| Alice | Johnson | Alice Johnson | alice.johnson@company.com | EMP002 | Sales | Confidential 2 |
+| Bob | Anderson | Bob Anderson | bob.anderson@example.org | EMP003 | Marketing | Secret 3 |
+| Mary | Brown | Mary Brown | mary.brown@company.com | EMP004 | Engineering | Internal 4 |
+
+#### Output
+| FirstName | LastName | FullName | Email | EmployeeID | Department | Notes |
+|-----------|----------|----------|-------|------------|------------|-------|
+| Patrick | Lowe | Patrick Lowe | patrick.lowe@company.com | JQ3O81FS | Engineering | |
+| Jason | Williams | Jason Williams | jason.williams@company.com | 0CB4RISP | Sales | |
+| Sheila | Flores | Sheila Flores | sheila.flores@example.org | 0VQ5XJRZ | Marketing | |
+| Lauren | Bush | Lauren Bush | lauren.bush@company.com | XBIGNGA8 | Engineering | |
+
+*Note: Department column remains unchanged (not in column_config), while Notes are cleared (misc type).*
+
 ## Column Types
 
 - `first_name`: Anonymizes to realistic first names
