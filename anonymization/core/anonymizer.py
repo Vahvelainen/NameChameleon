@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 import pandas as pd
 from anonymization.utils.hasher import DeterministicHasher
-from anonymization.utils.normalizer import StringNormalizer
+from anonymization.utils.normalizer import StringNormalizer, IdNormalizer
 from anonymization.utils.name_generator import NameGenerator
 from anonymization.core.column_handlers import (
     FirstNameHandler,
@@ -24,6 +24,7 @@ class Anonymizer:
         self.locale = locale
         
         self.normalizer = StringNormalizer()
+        self.id_normalizer = IdNormalizer()
         self.hasher = DeterministicHasher(salt)
         self.name_generator = NameGenerator(locale)
         
@@ -36,7 +37,7 @@ class Anonymizer:
             'last_name': LastNameHandler(self.hasher, self.normalizer, self.name_generator),
             'full_name': FullNameHandler(self.hasher, self.normalizer, self.name_generator),
             'email': EmailHandler(self.hasher, self.normalizer, self.name_generator),
-            'id': IdHandler(self.hasher, self.normalizer),
+            'id': IdHandler(self.hasher, self.id_normalizer),
             'misc': MiscHandler(self.hasher, self.normalizer)
         }
         

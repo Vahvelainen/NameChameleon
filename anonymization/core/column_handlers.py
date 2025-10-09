@@ -1,6 +1,6 @@
 from typing import Any
 from anonymization.utils.hasher import DeterministicHasher
-from anonymization.utils.normalizer import StringNormalizer
+from anonymization.utils.normalizer import StringNormalizer, IdNormalizer
 from anonymization.utils.name_generator import NameGenerator
 
 
@@ -102,7 +102,7 @@ class EmailHandler(BaseColumnHandler):
 
 class IdHandler(BaseColumnHandler):
     
-    def __init__(self, hasher: DeterministicHasher, normalizer: StringNormalizer):
+    def __init__(self, hasher: DeterministicHasher, normalizer: IdNormalizer):
         super().__init__(hasher, normalizer)
     
     def anonymize(self, value: Any) -> str:
