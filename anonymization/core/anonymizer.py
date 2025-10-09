@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Any
+from typing import Dict, Optional
 import pandas as pd
 from anonymization.utils.hasher import DeterministicHasher
 from anonymization.utils.normalizer import StringNormalizer
@@ -9,7 +9,8 @@ from anonymization.core.column_handlers import (
     FullNameHandler,
     EmailHandler,
     IdHandler,
-    MiscHandler
+    MiscHandler,
+    BaseColumnHandler
 )
 
 
@@ -19,17 +20,54 @@ class Anonymizer:
                  column_config: Dict[str, str],
                  salt: Optional[bytes] = None,
                  locale: str = 'en_US'):
-        pass
+        self.column_config = column_config
+        self.locale = locale
+        
+        self.normalizer = StringNormalizer()
+        self.hasher = DeterministicHasher(salt)
+        self.name_generator = NameGenerator(locale)
+        
+        self.handlers: Dict[str, BaseColumnHandler] = {}
+        self._initialize_handlers()
+    
+    def _initialize_handlers(self) -> None:
+        handler_map = {
+            'first_name': FirstNameHandler(self.hasher, self.normalizer, self.name_generator),
+            'last_name': LastNameHandler(self.hasher, self.normalizer, self.name_generator),
+            'full_name': FullNameHandler(self.hasher, self.normalizer, self.name_generator),
+            'email': EmailHandler(self.hasher, self.normalizer, self.name_generator),
+            'id': IdHandler(self.hasher, self.normalizer),
+            'misc': MiscHandler(self.hasher, self.normalizer)
+        }
+        
+        for column_name, column_type in self.column_config.items():
+            if column_type not in handler_map:
+                raise ValueError(f"Unknown column type: {column_type}")
+            self.handlers[column_name] = handler_map[column_type]
     
     def anonymize_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
-        pass
+        result_df = df.copy()
+        
+        for column_name, handler in self.handlers.items():
+            if column_name in result_df.columns:
+                result_df[column_name] = result_df[column_name].apply(handler.anonymize)
+        
+        return result_df
     
     def anonymize_csv(self, input_path: str, output_path: str) -> None:
-        pass
+        df = pd.read_csv(input_path)
+        anonymized_df = self.anonymize_dataframe(df)
+        anonymized_df.to_csv(output_path, index=False)
     
     def anonymize_excel(self, input_path: str, output_path: str) -> None:
-        pass
+        excel_file = pd.ExcelFile(input_path)
+        
+        with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+            for sheet_name in excel_file.sheet_names:
+                df = pd.read_excel(excel_file, sheet_name=sheet_name)
+                anonymized_df = self.anonymize_dataframe(df)
+                anonymized_df.to_excel(writer, sheet_name=sheet_name, index=False)
     
     def get_salt(self) -> bytes:
-        pass
+        return self.hasher.get_salt()
 
