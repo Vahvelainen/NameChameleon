@@ -1,0 +1,11 @@
+{
+  "column_config": {
+    "FirstName": "first_name",
+    "LastName": "last_name",
+    "FullName": "full_name",
+    "Email": "email",
+    "EmployeeID": "id",
+    "Notes": "misc"
+  }
+}
+

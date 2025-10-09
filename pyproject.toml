@@ -11,3 +11,9 @@ dependencies = [
     "Faker>=20.0.0",
 ]
 
+[project.scripts]
+namemasker = "anonymization.cli.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["anonymization*"]
+

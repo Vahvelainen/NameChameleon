@@ -16,9 +16,31 @@ A Python tool for anonymizing Excel and CSV files with deterministic pseudonymiz
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+pip install -e .  # Install CLI tool
 ```
 
 ## Usage
+
+### CLI Tool
+
+```bash
+# Interactive mode - select column types interactively
+namemasker anonymize input.xlsx output.xlsx -i
+
+# Using a config file
+namemasker anonymize input.csv output.csv -c examples/config.json
+
+# Show available columns in a file
+namemasker columns input.xlsx
+
+# With salt for reproducibility
+namemasker anonymize input.csv output.csv -c config.json --salt a1b2c3d4... --show-salt
+
+# Different locale
+namemasker anonymize input.xlsx output.xlsx -i --locale fi_FI
+```
+
+### Python API
 
 ```python
 from anonymization import Anonymizer
