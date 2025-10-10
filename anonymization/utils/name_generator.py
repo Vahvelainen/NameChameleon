@@ -1,47 +1,57 @@
-from typing import Set, Dict
+from typing import Dict
 from faker import Faker
+from faker.exceptions import UniquenessException
 
 
 class NameGenerator:
     
     def __init__(self, locale: str = 'en_US'):
         self.locale = locale
-        self.used_first_names: Set[str] = set()
-        self.used_last_names: Set[str] = set()
+        self.faker = Faker(self.locale)
         self.first_name_cache: Dict[int, str] = {}
         self.last_name_cache: Dict[int, str] = {}
+        self.suffix_counter_first: Dict[str, int] = {}
+        self.suffix_counter_last: Dict[str, int] = {}
     
     def get_first_name(self, hash_int: int) -> str:
         if hash_int in self.first_name_cache:
             return self.first_name_cache[hash_int]
         
-        attempt = 0
-        while True:
-            faker = Faker(self.locale)
-            faker.seed_instance(hash_int + attempt)
-            name = faker.first_name()
+        try:
+            name = self.faker.unique.first_name()
+        except UniquenessException:
+            temp_faker = Faker(self.locale)
+            temp_faker.seed_instance(hash_int)
+            base_name = temp_faker.first_name()
             
-            if name not in self.used_first_names:
-                self.used_first_names.add(name)
-                self.first_name_cache[hash_int] = name
-                return name
+            if base_name not in self.suffix_counter_first:
+                self.suffix_counter_first[base_name] = 2
+            else:
+                self.suffix_counter_first[base_name] += 1
             
-            attempt += 1
+            name = f"{base_name}{self.suffix_counter_first[base_name]}"
+        
+        self.first_name_cache[hash_int] = name
+        return name
     
     def get_last_name(self, hash_int: int) -> str:
         if hash_int in self.last_name_cache:
             return self.last_name_cache[hash_int]
         
-        attempt = 0
-        while True:
-            faker = Faker(self.locale)
-            faker.seed_instance(hash_int + attempt)
-            name = faker.last_name()
+        try:
+            name = self.faker.unique.last_name()
+        except UniquenessException:
+            temp_faker = Faker(self.locale)
+            temp_faker.seed_instance(hash_int)
+            base_name = temp_faker.last_name()
             
-            if name not in self.used_last_names:
-                self.used_last_names.add(name)
-                self.last_name_cache[hash_int] = name
-                return name
+            if base_name not in self.suffix_counter_last:
+                self.suffix_counter_last[base_name] = 2
+            else:
+                self.suffix_counter_last[base_name] += 1
             
-            attempt += 1
+            name = f"{base_name}{self.suffix_counter_last[base_name]}"
+        
+        self.last_name_cache[hash_int] = name
+        return name
 
