@@ -62,11 +62,44 @@ class FullNameHandler(BaseColumnHandler):
             hash_int = self.hasher.hash_to_int(parts[0])
             return self.name_generator.get_first_name(hash_int)
         else:
-            first_hash = self.hasher.hash_to_int(parts[0])
             last_hash = self.hasher.hash_to_int(parts[-1])
-            first = self.name_generator.get_first_name(first_hash)
             last = self.name_generator.get_last_name(last_hash)
-            return f"{first} {last}"
+            
+            first_names = []
+            for part in parts[:-1]:
+                first_hash = self.hasher.hash_to_int(part)
+                first_names.append(self.name_generator.get_first_name(first_hash))
+            
+            return f"{' '.join(first_names)} {last}"
+
+
+class FullNameInvertedHandler(BaseColumnHandler):
+    
+    def __init__(self, hasher: DeterministicHasher, normalizer: StringNormalizer, name_generator: NameGenerator):
+        super().__init__(hasher, normalizer)
+        self.name_generator = name_generator
+    
+    def anonymize(self, value: Any) -> str:
+        normalized = self.normalizer.normalize(value)
+        if not normalized:
+            return ""
+        
+        parts = normalized.split()
+        if len(parts) == 0:
+            return ""
+        elif len(parts) == 1:
+            hash_int = self.hasher.hash_to_int(parts[0])
+            return self.name_generator.get_last_name(hash_int)
+        else:
+            last_hash = self.hasher.hash_to_int(parts[0])
+            last = self.name_generator.get_last_name(last_hash)
+            
+            first_names = []
+            for part in parts[1:]:
+                first_hash = self.hasher.hash_to_int(part)
+                first_names.append(self.name_generator.get_first_name(first_hash))
+            
+            return f"{last} {' '.join(first_names)}"
 
 
 class EmailHandler(BaseColumnHandler):

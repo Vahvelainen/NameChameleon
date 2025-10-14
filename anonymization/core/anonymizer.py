@@ -7,6 +7,7 @@ from anonymization.core.column_handlers import (
     FirstNameHandler,
     LastNameHandler,
     FullNameHandler,
+    FullNameInvertedHandler,
     EmailHandler,
     IdHandler,
     MiscHandler,
@@ -36,6 +37,7 @@ class Anonymizer:
             'first_name': FirstNameHandler(self.hasher, self.normalizer, self.name_generator),
             'last_name': LastNameHandler(self.hasher, self.normalizer, self.name_generator),
             'full_name': FullNameHandler(self.hasher, self.normalizer, self.name_generator),
+            'full_name_inverted': FullNameInvertedHandler(self.hasher, self.normalizer, self.name_generator),
             'email': EmailHandler(self.hasher, self.normalizer, self.name_generator),
             'id': IdHandler(self.hasher, self.id_normalizer),
             'misc': MiscHandler(self.hasher, self.normalizer)

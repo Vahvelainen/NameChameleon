@@ -4,7 +4,7 @@ from typing import Dict, Any
 import pandas as pd
 
 
-COLUMN_TYPES = ['first_name', 'last_name', 'full_name', 'email', 'id', 'misc', 'skip']
+COLUMN_TYPES = ['first_name', 'last_name', 'full_name', 'full_name_inverted', 'email', 'id', 'misc', 'skip']
 
 
 def detect_file_columns(file_path: str) -> list[str]:
