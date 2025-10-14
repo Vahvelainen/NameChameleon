@@ -3,8 +3,7 @@ import json
 from pathlib import Path
 from typing import Dict, Any
 
-
-COLUMN_TYPES = ['first_name', 'last_name', 'full_name', 'full_name_inverted', 'email', 'id', 'misc', 'skip']
+from anonymization.cli.interactive_colum_mapper import ColumnMappingUI, COLUMN_TYPES
 
 
 class ConfigBuilder(ABC):
@@ -20,36 +19,8 @@ class InteractiveConfigBuilder(ConfigBuilder):
         self.columns = columns
     
     def build(self) -> Dict[str, str]:
-        print("\nAvailable column types:")
-        for i, col_type in enumerate(COLUMN_TYPES, 1):
-            print(f"  {i}. {col_type}")
-        
-        print("\nMap your columns to types (or 'skip' to leave unchanged):\n")
-        
-        column_config = {}
-        for column in self.columns:
-            while True:
-                choice = input(f"'{column}' -> type (1-{len(COLUMN_TYPES)}) or name: ").strip().lower()
-                
-                if choice.isdigit():
-                    idx = int(choice) - 1
-                    if 0 <= idx < len(COLUMN_TYPES):
-                        col_type = COLUMN_TYPES[idx]
-                        if col_type != 'skip':
-                            column_config[column] = col_type
-                        break
-                    else:
-                        print(f"Invalid choice. Enter 1-{len(COLUMN_TYPES)}")
-                elif choice in COLUMN_TYPES:
-                    if choice != 'skip':
-                        column_config[column] = choice
-                    break
-                elif choice == '':
-                    break
-                else:
-                    print(f"Invalid type. Choose from: {', '.join(COLUMN_TYPES)}")
-        
-        return column_config
+        ui = ColumnMappingUI(self.columns)
+        return ui.run()
 
 
 class FileConfigBuilder(ConfigBuilder):
