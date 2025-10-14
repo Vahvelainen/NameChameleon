@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Dict
 
-from anonymization.cli.interactive_colum_mapper import ColumnMappingUI
+from anonymization.cli.interactive_column_mapper import ColumnMappingUI
 
 
 class ConfigBuilder(ABC):
