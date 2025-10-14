@@ -1,4 +1,6 @@
 from typing import Dict
+import json
+from pathlib import Path
 from prompt_toolkit import Application
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout import Layout, HSplit, Window
@@ -114,9 +116,36 @@ class ColumnMappingUI:
         column_config = {col: typ for col, typ in self.selected_types.items() if typ != 'skip'}
         
         if column_config:
-            print("\n✓ Configuration saved!")
+            print("\n✓ Configuration complete!")
+            self._prompt_save_config(column_config)
         else:
             print("\n⚠ No columns configured")
         
         return column_config
+    
+    def _prompt_save_config(self, column_config: Dict[str, str]) -> None:
+        save_path = input("\nSave configuration to file? (Enter path or leave empty to skip): ").strip()
+        
+        if not save_path:
+            print("Configuration not saved.")
+            return
+        
+        try:
+            path = Path(save_path)
+            
+            if path.suffix.lower() != '.json':
+                path = Path(str(path) + '.json')
+            
+            path.parent.mkdir(parents=True, exist_ok=True)
+            
+            config_data = {
+                "column_config": column_config
+            }
+            
+            with open(path, 'w') as f:
+                json.dump(config_data, f, indent=2)
+            
+            print(f"✓ Configuration saved to: {path}")
+        except Exception as e:
+            print(f"⚠ Failed to save configuration: {e}")
 
