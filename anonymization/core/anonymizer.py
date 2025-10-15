@@ -24,8 +24,6 @@ class Anonymizer:
         self.column_config = column_config
         self.locale = locale
         
-        self.normalizer = StringNormalizer()
-        self.id_normalizer = IdNormalizer()
         self.hasher = DeterministicHasher(salt)
         self.name_generator = NameGenerator(locale)
         
@@ -33,14 +31,17 @@ class Anonymizer:
         self._initialize_handlers()
     
     def get_handlers(self) -> Dict[str, BaseColumnHandler]:
+        normalizer = StringNormalizer()
+        id_normalizer = IdNormalizer()
+        
         return {
-            'first_name': FirstNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'last_name': LastNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'full_name': FullNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'full_name_inverted': FullNameInvertedHandler(self.hasher, self.normalizer, self.name_generator),
-            'email': EmailHandler(self.hasher, self.normalizer, self.name_generator),
-            'id': IdHandler(self.hasher, self.id_normalizer),
-            'misc': MiscHandler(self.hasher, self.normalizer)
+            'first_name': FirstNameHandler(self.hasher, normalizer, self.name_generator),
+            'last_name': LastNameHandler(self.hasher, normalizer, self.name_generator),
+            'full_name': FullNameHandler(self.hasher, normalizer, self.name_generator),
+            'full_name_inverted': FullNameInvertedHandler(self.hasher, normalizer, self.name_generator),
+            'email': EmailHandler(self.hasher, normalizer, self.name_generator),
+            'id': IdHandler(self.hasher, id_normalizer),
+            'misc': MiscHandler(self.hasher, normalizer)
         }
     
     def _initialize_handlers(self) -> None:

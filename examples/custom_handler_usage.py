@@ -38,7 +38,7 @@ class CustomAnonymizer(Anonymizer):
         handlers = super().get_handlers()
         
         # Add custom handler
-        handlers['employee_id'] = EmployeeIdHandler(self.hasher, self.id_normalizer)
+        handlers['employee_id'] = EmployeeIdHandler(self.hasher, IdNormalizer())
         
         return handlers
 
