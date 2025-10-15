@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from anonymization.cli.commands import anonymize_command, show_columns_command
+from anonymization.cli.commands import AnonymizeCommand, ShowColumnsCommand
 
 
 def main() -> None:
@@ -45,9 +45,19 @@ def main() -> None:
     args = parser.parse_args()
     
     if args.command == 'anonymize':
-        anonymize_command(args)
+        command = AnonymizeCommand(
+            input_path=args.input,
+            output_path=args.output,
+            config_path=args.config,
+            interactive=args.interactive,
+            salt=args.salt,
+            locale=args.locale,
+            show_salt=args.show_salt
+        )
+        command.execute()
     elif args.command == 'columns':
-        show_columns_command(args.input)
+        command = ShowColumnsCommand(args.input)
+        command.execute()
     else:
         parser.print_help()
         sys.exit(1)

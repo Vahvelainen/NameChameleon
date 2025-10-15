@@ -1,84 +1,102 @@
 import sys
+from abc import ABC, abstractmethod
 from pathlib import Path
-from argparse import Namespace
-import pandas as pd
+from typing import Optional
 
 from anonymization.core.anonymizer import Anonymizer
-from anonymization.cli.helpers import detect_file_columns, interactive_column_mapping, load_config_file
+from anonymization.cli.file_handlers import get_file_handler, ExcelFileHandler
+from anonymization.cli.config_builder import InteractiveConfigBuilder, FileConfigBuilder
 
 
-def show_columns_command(file_path: str) -> None:
-    path = Path(file_path)
+class Command(ABC):
     
-    if path.suffix.lower() == '.csv':
-        columns = detect_file_columns(file_path)
-        print(f"\nColumns in '{file_path}':")
-        for i, col in enumerate(columns, 1):
-            print(f"  {i}. {col}")
-    elif path.suffix.lower() in ['.xlsx', '.xls']:
-        xl = pd.ExcelFile(file_path)
-        print(f"\nColumns in '{file_path}':")
+    @abstractmethod
+    def execute(self) -> None:
+        pass
+
+
+class ShowColumnsCommand(Command):
+    
+    def __init__(self, file_path: str):
+        self.file_path = file_path
+    
+    def execute(self) -> None:
+        file_handler = get_file_handler(self.file_path)
+        file_handler.show_info()
+
+
+class AnonymizeCommand(Command):
+    
+    def __init__(self,
+                 input_path: str,
+                 output_path: str,
+                 config_path: Optional[str] = None,
+                 interactive: bool = False,
+                 salt: Optional[str] = None,
+                 locale: str = 'en_US',
+                 show_salt: bool = False):
+        self.input_path = input_path
+        self.output_path = output_path
+        self.config_path = config_path
+        self.interactive = interactive
+        self.salt = salt
+        self.locale = locale
+        self.show_salt = show_salt
+    
+    def execute(self) -> None:
+        column_config = self._build_config()
         
-        for sheet_name in xl.sheet_names:
-            df = pd.read_excel(file_path, sheet_name=sheet_name, nrows=0)
-            print(f"\n  Sheet: {sheet_name}")
-            for i, col in enumerate(df.columns, 1):
-                print(f"    {i}. {col}")
+        if not column_config:
+            print("No columns configured for anonymization. Exiting.")
+            sys.exit(1)
         
-        print(f"\n  Unique columns across all sheets:")
-        unique_cols = detect_file_columns(file_path)
-        for i, col in enumerate(unique_cols, 1):
-            print(f"    {i}. {col}")
-    
-    print()
-
-
-def anonymize_command(args: Namespace) -> None:
-    column_config = {}
-    
-    if args.config:
-        column_config = load_config_file(args.config)
-        print(f"Loaded configuration from: {args.config}")
-    elif args.interactive:
-        input_path = Path(args.input)
-        if input_path.suffix.lower() in ['.xlsx', '.xls']:
-            print("\nDetecting unique columns across all Excel sheets...")
-            print("(The configuration will apply to all sheets)")
+        print(f"\nColumn configuration:")
+        for col, col_type in column_config.items():
+            print(f"  {col} -> {col_type}")
         
-        columns = detect_file_columns(args.input)
-        column_config = interactive_column_mapping(columns)
-    else:
-        print("Error: Must specify either --config or --interactive")
-        sys.exit(1)
+        salt_bytes = bytes.fromhex(self.salt) if self.salt else None
+        
+        anonymizer = Anonymizer(
+            column_config=column_config,
+            salt=salt_bytes,
+            locale=self.locale
+        )
+        
+        self._anonymize_file(anonymizer)
+        
+        print(f"\n✓ Anonymized file saved to: {self.output_path}")
+        
+        if self.show_salt:
+            salt_hex = anonymizer.get_salt().hex()
+            print(f"\nSalt (save for reproducibility): {salt_hex}")
     
-    if not column_config:
-        print("No columns configured for anonymization. Exiting.")
-        sys.exit(1)
+    def _build_config(self) -> dict[str, str]:
+        if self.config_path:
+            builder = FileConfigBuilder(self.config_path)
+            print(f"Loaded configuration from: {self.config_path}")
+            return builder.build()
+        elif self.interactive:
+            file_handler = get_file_handler(self.input_path)
+            
+            if isinstance(file_handler, ExcelFileHandler):
+                print("\nDetecting unique columns across all Excel sheets...")
+                print("(The configuration will apply to all sheets)")
+            
+            columns = file_handler.detect_columns()
+            builder = InteractiveConfigBuilder(columns)
+            return builder.build()
+        else:
+            print("Error: Must specify either --config or --interactive")
+            sys.exit(1)
     
-    print(f"\nColumn configuration:")
-    for col, col_type in column_config.items():
-        print(f"  {col} -> {col_type}")
-    
-    salt = bytes.fromhex(args.salt) if args.salt else None
-    
-    anonymizer = Anonymizer(
-        column_config=column_config,
-        salt=salt,
-        locale=args.locale
-    )
-    
-    input_path = Path(args.input)
-    if input_path.suffix.lower() == '.csv':
-        anonymizer.anonymize_csv(args.input, args.output)
-    elif input_path.suffix.lower() in ['.xlsx', '.xls']:
-        anonymizer.anonymize_excel(args.input, args.output)
-    else:
-        print(f"Error: Unsupported file format: {input_path.suffix}")
-        sys.exit(1)
-    
-    print(f"\n✓ Anonymized file saved to: {args.output}")
-    
-    if args.show_salt:
-        salt_hex = anonymizer.get_salt().hex()
-        print(f"\nSalt (save for reproducibility): {salt_hex}")
-
+    def _anonymize_file(self, anonymizer: Anonymizer) -> None:
+        input_path = Path(self.input_path)
+        suffix = input_path.suffix.lower()
+        
+        if suffix == '.csv':
+            anonymizer.anonymize_csv(self.input_path, self.output_path)
+        elif suffix in ['.xlsx', '.xls']:
+            anonymizer.anonymize_excel(self.input_path, self.output_path)
+        else:
+            print(f"Error: Unsupported file format: {suffix}")
+            sys.exit(1)
