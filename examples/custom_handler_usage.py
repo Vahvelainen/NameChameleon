@@ -1,15 +1,8 @@
-from typing import Any
+from typing import Any, Dict
 import pandas as pd
 from anonymization import (
     Anonymizer,
     BaseColumnHandler,
-    FirstNameHandler,
-    LastNameHandler,
-    FullNameHandler,
-    FullNameInvertedHandler,
-    EmailHandler,
-    IdHandler,
-    MiscHandler,
     DeterministicHasher,
     IdNormalizer
 )
@@ -40,25 +33,14 @@ class EmployeeIdHandler(BaseColumnHandler):
 # Extend Anonymizer to support custom handlers
 class CustomAnonymizer(Anonymizer):
     
-    def _initialize_handlers(self) -> None:
-        # Build handler map with both standard and custom handlers
-        handler_map = {
-            'first_name': FirstNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'last_name': LastNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'full_name': FullNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'full_name_inverted': FullNameInvertedHandler(self.hasher, self.normalizer, self.name_generator),
-            'email': EmailHandler(self.hasher, self.normalizer, self.name_generator),
-            'id': IdHandler(self.hasher, self.id_normalizer),
-            'misc': MiscHandler(self.hasher, self.normalizer),
-            # Add custom handler
-            'employee_id': EmployeeIdHandler(self.hasher, self.id_normalizer)
-        }
+    def get_handlers(self) -> Dict[str, BaseColumnHandler]:
+        # Get all standard handlers
+        handlers = super().get_handlers()
         
-        # Map columns to their handlers
-        for column_name, column_type in self.column_config.items():
-            if column_type not in handler_map:
-                raise ValueError(f"Unknown column type: {column_type}")
-            self.handlers[column_name] = handler_map[column_type]
+        # Add custom handler
+        handlers['employee_id'] = EmployeeIdHandler(self.hasher, self.id_normalizer)
+        
+        return handlers
 
 
 # Example usage

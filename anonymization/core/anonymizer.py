@@ -32,8 +32,8 @@ class Anonymizer:
         self.handlers: Dict[str, BaseColumnHandler] = {}
         self._initialize_handlers()
     
-    def _initialize_handlers(self) -> None:
-        handler_map = {
+    def get_handlers(self) -> Dict[str, BaseColumnHandler]:
+        return {
             'first_name': FirstNameHandler(self.hasher, self.normalizer, self.name_generator),
             'last_name': LastNameHandler(self.hasher, self.normalizer, self.name_generator),
             'full_name': FullNameHandler(self.hasher, self.normalizer, self.name_generator),
@@ -42,6 +42,9 @@ class Anonymizer:
             'id': IdHandler(self.hasher, self.id_normalizer),
             'misc': MiscHandler(self.hasher, self.normalizer)
         }
+    
+    def _initialize_handlers(self) -> None:
+        handler_map = self.get_handlers()
         
         for column_name, column_type in self.column_config.items():
             if column_type not in handler_map:
