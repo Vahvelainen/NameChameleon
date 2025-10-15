@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-namemasker = "anonymization.cli.cli:main"
+chameleon = "anonymization.cli.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["anonymization*"]

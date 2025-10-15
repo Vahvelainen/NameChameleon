@@ -6,7 +6,7 @@ from anonymization.cli.commands import AnonymizeCommand, ShowColumnsCommand
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        prog='namemasker',
+        prog='chameleon',
         description='Anonymize CSV and Excel files with deterministic pseudonymization'
     )
     
