@@ -5,9 +5,11 @@ from faker.exceptions import UniquenessException
 
 class NameGenerator:
     
-    def __init__(self, locale: str = 'en_US'):
+    def __init__(self, locale: str = 'en_US', seed: int = None):
         self.locale = locale
         self.faker = Faker(self.locale)
+        if seed is not None:
+            self.faker.seed_instance(seed)
         self.first_name_cache: Dict[int, str] = {}
         self.last_name_cache: Dict[int, str] = {}
         self.suffix_counter_first: Dict[str, int] = {}

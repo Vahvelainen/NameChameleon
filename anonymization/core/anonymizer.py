@@ -24,24 +24,31 @@ class Anonymizer:
         self.column_config = column_config
         self.locale = locale
         
-        self.normalizer = StringNormalizer()
-        self.id_normalizer = IdNormalizer()
         self.hasher = DeterministicHasher(salt)
-        self.name_generator = NameGenerator(locale)
+        
+        salt_bytes = self.hasher.get_salt()
+        seed = int.from_bytes(salt_bytes[:8])
+        self.name_generator = NameGenerator(locale, seed=seed)
         
         self.handlers: Dict[str, BaseColumnHandler] = {}
         self._initialize_handlers()
     
-    def _initialize_handlers(self) -> None:
-        handler_map = {
-            'first_name': FirstNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'last_name': LastNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'full_name': FullNameHandler(self.hasher, self.normalizer, self.name_generator),
-            'full_name_inverted': FullNameInvertedHandler(self.hasher, self.normalizer, self.name_generator),
-            'email': EmailHandler(self.hasher, self.normalizer, self.name_generator),
-            'id': IdHandler(self.hasher, self.id_normalizer),
-            'misc': MiscHandler(self.hasher, self.normalizer)
+    def get_handlers(self) -> Dict[str, BaseColumnHandler]:
+        normalizer = StringNormalizer()
+        id_normalizer = IdNormalizer()
+        
+        return {
+            'first_name': FirstNameHandler(self.hasher, normalizer, self.name_generator),
+            'last_name': LastNameHandler(self.hasher, normalizer, self.name_generator),
+            'full_name': FullNameHandler(self.hasher, normalizer, self.name_generator),
+            'full_name_inverted': FullNameInvertedHandler(self.hasher, normalizer, self.name_generator),
+            'email': EmailHandler(self.hasher, normalizer, self.name_generator),
+            'id': IdHandler(self.hasher, id_normalizer),
+            'misc': MiscHandler(self.hasher, normalizer)
         }
+    
+    def _initialize_handlers(self) -> None:
+        handler_map = self.get_handlers()
         
         for column_name, column_type in self.column_config.items():
             if column_type not in handler_map:
