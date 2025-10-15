@@ -1,7 +1,7 @@
 from typing import Any
 import pandas as pd
-from anonymization.core.anonymizer import Anonymizer
-from anonymization.core.column_handlers import (
+from anonymization import (
+    Anonymizer,
     BaseColumnHandler,
     FirstNameHandler,
     LastNameHandler,
@@ -9,10 +9,10 @@ from anonymization.core.column_handlers import (
     FullNameInvertedHandler,
     EmailHandler,
     IdHandler,
-    MiscHandler
+    MiscHandler,
+    DeterministicHasher,
+    IdNormalizer
 )
-from anonymization.utils.hasher import DeterministicHasher
-from anonymization.utils.normalizer import IdNormalizer
 
 
 # Custom handler for employee IDs with format EID-XXXX
