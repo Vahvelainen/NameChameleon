@@ -25,7 +25,10 @@ class Anonymizer:
         self.locale = locale
         
         self.hasher = DeterministicHasher(salt)
-        self.name_generator = NameGenerator(locale)
+        
+        salt_bytes = self.hasher.get_salt()
+        seed = int.from_bytes(salt_bytes[:8])
+        self.name_generator = NameGenerator(locale, seed=seed)
         
         self.handlers: Dict[str, BaseColumnHandler] = {}
         self._initialize_handlers()
