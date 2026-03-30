@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from anonymization.cli.commands import AnonymizeCommand, ShowColumnsCommand
+from namechameleon.cli.commands import AnonymizeCommand, ShowColumnsCommand
 
 
 def main() -> None:
@@ -26,7 +26,7 @@ def main() -> None:
     )
     anonymize_parser.add_argument(
         '--salt',
-        help='Salt as hex string for reproducible anonymization'
+        help='Salt as hex string for reproducible namechameleon'
     )
     anonymize_parser.add_argument(
         '--locale',
@@ -36,7 +36,7 @@ def main() -> None:
     anonymize_parser.add_argument(
         '--show-salt',
         action='store_true',
-        help='Display the salt after anonymization'
+        help='Display the salt after namechameleon'
     )
     
     columns_parser = subparsers.add_parser('columns', help='Show columns in a file')

@@ -1,4 +1,4 @@
-from anonymization import Anonymizer
+from namechameleon import Anonymizer
 
 # Define which columns to anonymize and their types
 column_config = {

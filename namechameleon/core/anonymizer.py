@@ -1,9 +1,9 @@
 from typing import Dict, Optional
 import pandas as pd
-from anonymization.utils.hasher import DeterministicHasher
-from anonymization.utils.normalizer import StringNormalizer, IdNormalizer
-from anonymization.utils.name_generator import NameGenerator
-from anonymization.core.column_handlers import (
+from namechameleon.utils.hasher import DeterministicHasher
+from namechameleon.utils.normalizer import StringNormalizer, IdNormalizer
+from namechameleon.utils.name_generator import NameGenerator
+from namechameleon.core.column_handlers import (
     FirstNameHandler,
     LastNameHandler,
     FullNameHandler,

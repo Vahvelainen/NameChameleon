@@ -1,6 +1,6 @@
 from typing import Any, Dict
 import pandas as pd
-from anonymization import (
+from namechameleon import (
     Anonymizer,
     BaseColumnHandler,
     DeterministicHasher,

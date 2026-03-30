@@ -43,9 +43,9 @@ chameleon anonymize input.xlsx output.xlsx -i --locale fi_FI
 ### Python API
 
 ```python
-from anonymization import Anonymizer
+from namechameleon import Anonymizer
 
-# Map your column names to anonymization types
+# Map your column names to namechameleon types
 column_config = {
     'FirstName': 'first_name',      # Column name in your file → type
     'LastName': 'last_name',
@@ -120,7 +120,7 @@ For consistency across columns, use dot-separated emails (e.g., `john.smith@doma
 ## Architecture
 
 ```
-anonymization/
+namechameleon/
 ├── core/
 │   ├── anonymizer.py        # Main Anonymizer class
 │   └── column_handlers.py   # Handler for each column type

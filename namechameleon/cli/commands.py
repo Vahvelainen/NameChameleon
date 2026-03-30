@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional
 
-from anonymization.core.anonymizer import Anonymizer
-from anonymization.cli.file_handlers import get_file_handler, ExcelFileHandler
-from anonymization.cli.config_builder import InteractiveConfigBuilder, FileConfigBuilder
+from namechameleon.core.anonymizer import Anonymizer
+from namechameleon.cli.file_handlers import get_file_handler, ExcelFileHandler
+from namechameleon.cli.config_builder import InteractiveConfigBuilder, FileConfigBuilder
 
 
 class Command(ABC):
@@ -47,7 +47,7 @@ class AnonymizeCommand(Command):
         column_config = self._build_config()
         
         if not column_config:
-            print("No columns configured for anonymization. Exiting.")
+            print("No columns configured for namechameleon. Exiting.")
             sys.exit(1)
         
         print(f"\nColumn configuration:")

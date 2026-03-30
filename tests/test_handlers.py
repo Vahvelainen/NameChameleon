@@ -2,10 +2,10 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from anonymization.utils.normalizer import StringNormalizer
-from anonymization.utils.hasher import DeterministicHasher
-from anonymization.utils.name_generator import NameGenerator
-from anonymization.core.column_handlers import (
+from namechameleon.utils.normalizer import StringNormalizer
+from namechameleon.utils.hasher import DeterministicHasher
+from namechameleon.utils.name_generator import NameGenerator
+from namechameleon.core.column_handlers import (
     FirstNameHandler,
     LastNameHandler,
     FullNameHandler,

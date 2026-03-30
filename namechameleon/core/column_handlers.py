@@ -1,7 +1,7 @@
 from typing import Any
-from anonymization.utils.hasher import DeterministicHasher
-from anonymization.utils.normalizer import StringNormalizer, IdNormalizer
-from anonymization.utils.name_generator import NameGenerator
+from namechameleon.utils.hasher import DeterministicHasher
+from namechameleon.utils.normalizer import StringNormalizer, IdNormalizer
+from namechameleon.utils.name_generator import NameGenerator
 
 
 class BaseColumnHandler:

@@ -3,7 +3,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pandas as pd
-from anonymization.core.anonymizer import Anonymizer
+from namechameleon.core.anonymizer import Anonymizer
 
 print("=" * 80)
 print("Creating Test Data")
