@@ -1,0 +1,5 @@
+exclude *.xlsx
+exclude *.xls
+exclude *.csv
+exclude *.log
+exclude output/
