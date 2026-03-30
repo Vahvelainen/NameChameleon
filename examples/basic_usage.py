@@ -7,7 +7,7 @@ column_config = {
     'FullName': 'full_name',
     'Email': 'email',
     'EmployeeID': 'id',
-    'InternalNotes': 'misc'
+    'InternalNotes': 'clear'
 }
 
 # Create anonymizer instance

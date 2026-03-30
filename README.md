@@ -5,7 +5,7 @@ A Python tool for anonymizing Excel and CSV files with deterministic pseudonymiz
 ## Features
 
 - Deterministic anonymization using salted HMAC-SHA256
-- Support for multiple column types: first_name, last_name, full_name, full_name_inverted, email, id, misc
+- Support for multiple column types: first_name, last_name, full_name, full_name_inverted, email, id, clear
 - Excel multi-sheet support
 - Extensible OOP architecture
 - Dynamic name generation using Faker
@@ -51,7 +51,7 @@ column_config = {
     'LastName': 'last_name',
     'Email': 'email',
     'EmployeeID': 'id',
-    'Notes': 'misc'
+    'Notes': 'clear'
     # Columns not listed here remain unchanged
 }
 
@@ -87,7 +87,7 @@ anonymizer2 = Anonymizer(column_config=column_config, salt=salt)
 | Sheila | Flores | Sheila Flores | sheila.flores@example.org | 0VQ5XJRZ | Marketing | |
 | Lauren | Bush | Lauren Bush | lauren.bush@company.com | XBIGNGA8 | Engineering | |
 
-*Note: Department column remains unchanged (not in column_config), while Notes are cleared (misc type).*
+*Note: Department column remains unchanged (not in column_config), while Notes are cleared (clear type).*
 
 ## Column Types
 
@@ -101,7 +101,7 @@ anonymizer2 = Anonymizer(column_config=column_config, salt=salt)
   - Single name treated as last name
 - `email`: Generates email from anonymized names (see below)
 - `id`: Hashes to 8-character alphanumeric ID
-- `misc`: Replaces with empty string (deletes)
+- `clear`: Replaces with empty string (clears)
 
 **Note:** Columns not in `column_config` remain unchanged.
 

@@ -39,7 +39,7 @@ column_config = {
     'FullName': 'full_name',
     'Email': 'email',
     'EmployeeID': 'id',
-    'Notes': 'misc'
+    'Notes': 'clear'
 }
 
 anonymizer = Anonymizer(column_config=column_config, locale='en_US')

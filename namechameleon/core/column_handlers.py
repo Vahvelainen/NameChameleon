@@ -156,7 +156,7 @@ class IdHandler(BaseColumnHandler):
         return ''.join(result)
 
 
-class MiscHandler(BaseColumnHandler):
+class ClearHandler(BaseColumnHandler):
     
     def __init__(self, hasher: DeterministicHasher, normalizer: StringNormalizer):
         super().__init__(hasher, normalizer)

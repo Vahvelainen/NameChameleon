@@ -7,7 +7,7 @@ from namechameleon.core.column_handlers import (
     FullNameInvertedHandler,
     EmailHandler,
     IdHandler,
-    MiscHandler
+    ClearHandler
 )
 from namechameleon.utils.hasher import DeterministicHasher
 from namechameleon.utils.normalizer import StringNormalizer, IdNormalizer

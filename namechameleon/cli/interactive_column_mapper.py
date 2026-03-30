@@ -8,7 +8,7 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.formatted_text import FormattedText
 
 
-COLUMN_TYPES = ['first_name', 'last_name', 'full_name', 'full_name_inverted', 'email', 'id', 'misc', 'skip']
+COLUMN_TYPES = ['first_name', 'last_name', 'full_name', 'full_name_inverted', 'email', 'id', 'clear', 'skip']
 
 
 class ColumnMappingUI:

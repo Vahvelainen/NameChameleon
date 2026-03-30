@@ -11,7 +11,7 @@ from namechameleon.core.column_handlers import (
     FullNameHandler,
     EmailHandler,
     IdHandler,
-    MiscHandler
+    ClearHandler
 )
 
 normalizer = StringNormalizer()
@@ -23,7 +23,7 @@ last_handler = LastNameHandler(hasher, normalizer, name_gen)
 full_handler = FullNameHandler(hasher, normalizer, name_gen)
 email_handler = EmailHandler(hasher, normalizer, name_gen)
 id_handler = IdHandler(hasher, normalizer)
-misc_handler = MiscHandler(hasher, normalizer)
+clear_handler = ClearHandler(hasher, normalizer)
 
 print("=" * 80)
 print("Testing Column Handlers")
@@ -65,7 +65,7 @@ for i, record in enumerate(test_records, 1):
     anon_full = full_handler.anonymize(record["FullName"])
     anon_email = email_handler.anonymize(record["Email"])
     anon_id = id_handler.anonymize(record["EmployeeID"])
-    anon_misc = misc_handler.anonymize(record["Notes"])
+    anon_misc = clear_handler.anonymize(record["Notes"])
     
     print(f"FirstName:   {record['FirstName']:20} → {anon_first}")
     print(f"LastName:    {record['LastName']:20} → {anon_last}")
@@ -99,7 +99,7 @@ for label, value in edge_cases:
     print(f"  FullName:  {full_handler.anonymize(value)!r}")
     print(f"  Email:     {email_handler.anonymize(value)!r}")
     print(f"  ID:        {id_handler.anonymize(value)!r}")
-    print(f"  Misc:      {misc_handler.anonymize(value)!r}")
+    print(f"  Misc:      {clear_handler.anonymize(value)!r}")
 
 print("\n" + "=" * 80)
 print("Testing Determinism (same input → same output)")

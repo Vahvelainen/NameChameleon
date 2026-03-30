@@ -10,7 +10,7 @@ from namechameleon.core.column_handlers import (
     FullNameInvertedHandler,
     EmailHandler,
     IdHandler,
-    MiscHandler,
+    ClearHandler,
     BaseColumnHandler
 )
 
@@ -44,7 +44,7 @@ class Anonymizer:
             'full_name_inverted': FullNameInvertedHandler(self.hasher, normalizer, self.name_generator),
             'email': EmailHandler(self.hasher, normalizer, self.name_generator),
             'id': IdHandler(self.hasher, id_normalizer),
-            'misc': MiscHandler(self.hasher, normalizer)
+            'clear': ClearHandler(self.hasher, normalizer)
         }
     
     def _initialize_handlers(self) -> None:
